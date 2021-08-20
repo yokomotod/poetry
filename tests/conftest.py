@@ -203,6 +203,9 @@ def git_mock(mocker):
     # Patch git module to not actually clone projects
     mocker.patch("poetry.core.vcs.git.Git.clone", new=mock_clone)
     mocker.patch("poetry.core.vcs.git.Git.checkout", new=lambda *_: None)
+    mocker.patch(
+        "poetry.core.vcs.git.Git.get_current_branch", new=lambda *_, **__: "master"
+    )
     p = mocker.patch("poetry.core.vcs.git.Git.rev_parse")
     p.return_value = "9cf87a285a2d3fbb0b9fa621997b3acc3631ed24"
 

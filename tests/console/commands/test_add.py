@@ -225,6 +225,39 @@ Package operations: 2 installs, 0 updates, 0 removals
     assert 2 == tester.command.installer.executor.installations_count
 
 
+def test_add_git_constraint_with_subdirectory(app, repo, tester, tmp_venv):
+    tester.command.set_env(tmp_venv)
+
+    repo.add_package(get_package("pendulum", "1.4.4"))
+
+    tester.execute(
+        "git+https://github.com/demo/pyproject-demo-subdirectory.git#subdirectory=project"
+    )
+
+    expected = """\
+
+Updating dependencies
+Resolving dependencies...
+
+Writing lock file
+
+Package operations: 2 installs, 0 updates, 0 removals
+
+  • Installing pendulum (1.4.4)
+  • Installing demo (0.1.2 9cf87a2)
+"""
+
+    assert expected == tester.io.fetch_output()
+    assert 2 == tester.command.installer.executor.installations_count
+
+    content = app.poetry.file.read()["tool"]["poetry"]
+    assert "demo" in content["dependencies"]
+    assert content["dependencies"]["demo"] == {
+        "git": "https://github.com/demo/pyproject-demo-subdirectory.git",
+        "subdirectory": "project",
+    }
+
+
 def test_add_git_constraint_with_extras(app, repo, tester, tmp_venv):
     tester.command.set_env(tmp_venv)
 

@@ -533,6 +533,9 @@ class Locker:
                     constraint["tag"] = dependency.tag
                 elif dependency.rev:
                     constraint["rev"] = dependency.rev
+
+                if dependency.directory:
+                    constraint["subdirectory"] = dependency.directory
             else:
                 constraint["version"] = str(dependency.pretty_constraint)
 

@@ -417,11 +417,17 @@ The <c1>init</c1> command creates a basic <comment>pyproject.toml</> file in the
                     if parsed.rev:
                         pair["rev"] = url.revision
 
+                    if url.subdirectory:
+                        pair["subdirectory"] = url.subdirectory
+
                     if extras:
                         pair["extras"] = extras
 
                     package = Provider.get_package_from_vcs(
-                        "git", url.url, rev=pair.get("rev")
+                        "git",
+                        url.url,
+                        rev=pair.get("rev"),
+                        subdirectory=url.subdirectory,
                     )
                     pair["name"] = package.name
                     result.append(pair)

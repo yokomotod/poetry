@@ -465,3 +465,33 @@ def test_executor_should_write_pep610_url_references_for_git(
             "url": package.source_url,
         },
     )
+
+
+def test_executor_should_write_pep610_url_references_for_git_with_subdirectory(
+    tmp_venv, pool, config, io, mock_file_downloads
+):
+    package = Package(
+        "demo",
+        "0.1.2",
+        source_type="git",
+        source_reference="master",
+        source_resolved_reference="123456",
+        source_url="https://github.com/demo/demo.git",
+        source_subdirectory="foo",
+    )
+
+    executor = Executor(tmp_venv, pool, config, io)
+    executor.execute([Install(package)])
+    verify_installed_distribution(
+        tmp_venv,
+        package,
+        {
+            "vcs_info": {
+                "vcs": "git",
+                "requested_revision": "master",
+                "commit_id": "123456",
+            },
+            "url": package.source_url,
+            "subdirectory": "foo",
+        },
+    )

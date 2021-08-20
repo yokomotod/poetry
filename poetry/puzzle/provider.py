@@ -177,6 +177,7 @@ class Provider:
             branch=dependency.branch,
             tag=dependency.tag,
             rev=dependency.rev,
+            subdirectory=dependency.directory,
             name=dependency.name,
         )
         package.develop = dependency.develop
@@ -197,6 +198,7 @@ class Provider:
         tag: Optional[str] = None,
         rev: Optional[str] = None,
         name: Optional[str] = None,
+        subdirectory: Optional[str] = None,
     ) -> Package:
         if vcs != "git":
             raise ValueError(f"Unsupported VCS dependency {vcs}")
@@ -208,21 +210,26 @@ class Provider:
         try:
             git = Git()
             git.clone(url, tmp_dir)
-            reference = branch or tag or rev
+            reference = checkout_reference = branch or tag or rev
 
-            if reference is None:
+            if checkout_reference is None:
                 # Figuring out the branch name
-                reference = git.run("symbolic-ref", "--short", "HEAD", folder=tmp_dir)
+                checkout_reference = git.get_current_branch(folder=tmp_dir)
 
-            git.checkout(reference, tmp_dir)
+            git.checkout(checkout_reference, tmp_dir)
 
-            revision = git.rev_parse(reference, tmp_dir).strip()
+            revision = git.rev_parse(checkout_reference, tmp_dir).strip()
 
-            package = cls.get_package_from_directory(tmp_dir, name=name)
+            project_dir = tmp_dir
+            if subdirectory:
+                project_dir = project_dir.joinpath(subdirectory)
+
+            package = cls.get_package_from_directory(project_dir, name=name)
             package._source_type = "git"
             package._source_url = url
             package._source_reference = reference
             package._source_resolved_reference = revision
+            package._source_subdirectory = subdirectory
         except Exception:
             raise
         finally:

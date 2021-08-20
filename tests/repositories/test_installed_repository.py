@@ -31,6 +31,9 @@ INSTALLED_RESULTS = [
     metadata.PathDistribution(SITE_PLATLIB / "lib64-2.3.4.dist-info"),
     metadata.PathDistribution(SITE_PLATLIB / "bender-2.0.5.dist-info"),
     metadata.PathDistribution(SITE_PURELIB / "git_pep_610-1.2.3.dist-info"),
+    metadata.PathDistribution(
+        SITE_PURELIB / "git_pep_610_with_subdirectory-1.2.3.dist-info"
+    ),
     metadata.PathDistribution(SITE_PURELIB / "url_pep_610-1.2.3.dist-info"),
     metadata.PathDistribution(SITE_PURELIB / "file_pep_610-1.2.3.dist-info"),
     metadata.PathDistribution(SITE_PURELIB / "directory_pep_610-1.2.3.dist-info"),
@@ -184,6 +187,19 @@ def test_load_pep_610_compliant_git_packages(repository):
     assert package.source_url == "https://github.com/demo/git-pep-610.git"
     assert package.source_reference == "my-branch"
     assert package.source_resolved_reference == "123456"
+
+
+def test_load_pep_610_compliant_git_packages_with_subdirectory(repository):
+    package = get_package_from_repository("git-pep-610-with-subdirectory", repository)
+
+    assert package is not None
+    assert package.name == "git-pep-610-with-subdirectory"
+    assert package.version.text == "1.2.3"
+    assert package.source_type == "git"
+    assert package.source_url == "https://github.com/demo/git-pep-610.git"
+    assert package.source_reference == "my-branch"
+    assert package.source_resolved_reference == "123456"
+    assert package.source_subdirectory == "foo"
 
 
 def test_load_pep_610_compliant_url_packages(repository):

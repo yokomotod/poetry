@@ -634,6 +634,10 @@ class Executor:
 
         # Now we just need to install from the source directory
         original_url = package.source_url
+
+        if package.source_subdirectory:
+            src_dir = src_dir.joinpath(package.source_subdirectory)
+
         package._source_url = str(src_dir)
 
         status_code = self._install_directory(operation)
@@ -811,6 +815,9 @@ class Executor:
                 "commit_id": package.source_resolved_reference,
             },
         }
+
+        if package.source_subdirectory:
+            reference["subdirectory"] = package.source_subdirectory
 
         return reference
 

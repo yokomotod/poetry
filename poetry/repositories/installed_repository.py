@@ -203,7 +203,7 @@ class InstalledRepository(Repository):
             # VCS distribution
             source_type = url_reference["vcs_info"]["vcs"]
             source_url = url_reference["url"]
-            source_reference = url_reference["vcs_info"]["requested_revision"]
+            source_reference = url_reference["vcs_info"].get("requested_revision")
             source_resolved_reference = url_reference["vcs_info"]["commit_id"]
 
         package = Package(
@@ -213,6 +213,7 @@ class InstalledRepository(Repository):
             source_url=source_url,
             source_reference=source_reference,
             source_resolved_reference=source_resolved_reference,
+            source_subdirectory=url_reference.get("subdirectory"),
             develop=develop,
         )
 

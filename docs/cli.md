@@ -305,7 +305,15 @@ poetry add git+ssh://github.com/sdispater/pendulum.git#develop
 poetry add git+ssh://github.com/sdispater/pendulum.git#2.0.5
 ```
 
-or make them point to a local directory or file:
+If the project is not located at the root of the git repository,
+you can specify the directory where it's located:
+
+```bash
+poetry add git+https://github.com/sdispater/pendulum.git#subdirectory=path_to_project
+poetry add git+ssh://github.com/sdispater/pendulum.git#subdirectory=path_to_project
+```
+
+You can also make the dependencies point to a local directory or file:
 
 ```bash
 poetry add ./my-package/
